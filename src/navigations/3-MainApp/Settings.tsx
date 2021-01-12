@@ -116,6 +116,24 @@ export const Settings = () => {
                   </View>
                 </TouchableHighlight>
               )}
+              <TouchableHighlight
+                onPress={() => navigation.navigate('DebugBackgroundLocation')}
+              >
+                <View style={styles.section}>
+                  <Text style={styles.sectionText}>
+                    Debug Location
+                  </Text>
+                </View>
+              </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => navigation.navigate('DebugBackgroundLocationHttp')}
+              >
+                <View style={styles.section}>
+                  <Text style={styles.sectionText}>
+                    Debug Location Http
+                  </Text>
+                </View>
+              </TouchableHighlight>
             </View>
           </View>
         </ScrollView>
