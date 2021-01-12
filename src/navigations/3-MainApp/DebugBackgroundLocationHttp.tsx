@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 
 export const DebugBackgroundLocationHttp = () => {
   const navigation = useNavigation()
-  const [logs, setLogs] = useState([])
+  const [logs, setLogs] = useState<any[]>([])
 
   useEffect(() => {
     let interval = setInterval(() => {
@@ -19,7 +19,9 @@ export const DebugBackgroundLocationHttp = () => {
         if (!log) {
           return
         }
-        setLogs(JSON.parse(log || '[]'))
+        if (Array.isArray(log)) {
+          setLogs(log)
+        }
       })
     }, 1000)
     return () => clearInterval(interval)
@@ -36,16 +38,13 @@ export const DebugBackgroundLocationHttp = () => {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}
         >
-          {(logs || []).map((log: any) => (
-            <Text
-              key={log.key}
-              style={{
-                fontSize: FONT_SIZES[200] * 0.75,
-              }}
-            >
-              {log}
-            </Text>
-          ))}
+          {(logs || []).map((log: any) => {
+            return (
+              <View key={log.key}>
+                <Text style={{ fontSize: FONT_SIZES[200] * 0.75 }}>{log}</Text>
+              </View>
+            )
+          })}
         </ScrollView>
         <View
           style={{
@@ -54,6 +53,14 @@ export const DebugBackgroundLocationHttp = () => {
             marginBottom: 16,
           }}
         >
+          <PrimaryButton
+            title={'Clear'}
+            style={{ width: '100%' }}
+            containerStyle={{ width: '100%' }}
+            onPress={() => {
+              navigation.pop()
+            }}
+          />
           <PrimaryButton
             title={I18n.t('close')}
             style={{ width: '100%' }}

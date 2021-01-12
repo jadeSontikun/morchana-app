@@ -13,23 +13,16 @@ class BackgroundTracking {
     BackgroundGeolocation.onHttp(async (response) => {
       console.log('BackgroundGeolocation [onHttp] ', response.status)
       const olds = await AsyncStorage.getItem('locationHttp')
-      const logs = olds
-        ? [
-            ...JSON.parse(olds),
-            {
-              key: moment().unix(),
-              timestamp: moment().toISOString(),
-              ...response,
-            },
-          ]
-        : []
-      await AsyncStorage.setItem('locationHttp', JSON.stringify(logs))
+      const currentList = JSON.parse(olds || '[]')
+      currentList.push({ timestamp: moment().toISOString(), ...response })
+      await AsyncStorage.setItem('locationHttp', JSON.stringify(currentList))
     })
   }
 
   private registerGeoLocation() {
     const headers = getAnonymousHeaders()
     return BackgroundGeolocation.ready({
+      isMoving: true,
       // iOS
       desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
       stationaryRadius: 50,
@@ -50,7 +43,7 @@ class BackgroundTracking {
       stopOnTerminate: false,
       startOnBoot: true,
       autoSync: true,
-      autoSyncThreshold: 10,
+      // autoSyncThreshold: 10,
       batchSync: true,
       maxBatchSize: 20,
       headers,
