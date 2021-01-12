@@ -22,7 +22,6 @@ class BackgroundTracking {
   private registerGeoLocation() {
     const headers = getAnonymousHeaders()
     return BackgroundGeolocation.ready({
-      isMoving: true,
       // iOS
       desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
       stationaryRadius: 50,
@@ -43,7 +42,7 @@ class BackgroundTracking {
       stopOnTerminate: false,
       startOnBoot: true,
       autoSync: true,
-      // autoSyncThreshold: 10,
+      autoSyncThreshold: 10,
       batchSync: true,
       maxBatchSize: 20,
       headers,

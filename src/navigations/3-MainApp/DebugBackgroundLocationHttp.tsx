@@ -15,14 +15,7 @@ export const DebugBackgroundLocationHttp = () => {
 
   useEffect(() => {
     let interval = setInterval(() => {
-      AsyncStorage.getItem('locationHttp').then((log) => {
-        if (!log) {
-          return
-        }
-        if (Array.isArray(log)) {
-          setLogs(log)
-        }
-      })
+      AsyncStorage.getItem('locationHttp').then((log) => setLogs(JSON.parse(log || '[]')))
     }, 1000)
     return () => clearInterval(interval)
   })
@@ -38,13 +31,7 @@ export const DebugBackgroundLocationHttp = () => {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}
         >
-          {(logs || []).map((log: any) => {
-            return (
-              <View key={log.key}>
-                <Text style={{ fontSize: FONT_SIZES[200] * 0.75 }}>{log}</Text>
-              </View>
-            )
-          })}
+          {(logs || []).map((log: any) => <Text key={log.timestamp} style={{ fontSize: FONT_SIZES[200] * 0.75 }}>{log}</Text>)}
         </ScrollView>
         <View
           style={{
@@ -55,10 +42,10 @@ export const DebugBackgroundLocationHttp = () => {
         >
           <PrimaryButton
             title={'Clear'}
-            style={{ width: '100%' }}
+            style={{ width: '100%', marginBottom: 5 }}
             containerStyle={{ width: '100%' }}
-            onPress={() => {
-              navigation.pop()
+            onPress={async() => {
+              await AsyncStorage.removeItem('locationHttp')
             }}
           />
           <PrimaryButton
