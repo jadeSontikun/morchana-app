@@ -125,7 +125,7 @@ export const Settings = () => {
                   </Text>
                 </View>
               </TouchableHighlight>
-              <TouchableHighlight
+              {/* <TouchableHighlight
                 onPress={() => navigation.navigate('DebugBackgroundLocationHttp')}
               >
                 <View style={styles.section}>
@@ -133,7 +133,7 @@ export const Settings = () => {
                     Debug Location Http
                   </Text>
                 </View>
-              </TouchableHighlight>
+              </TouchableHighlight> */}
             </View>
           </View>
         </ScrollView>
