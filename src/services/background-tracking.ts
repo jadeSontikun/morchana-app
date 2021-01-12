@@ -12,10 +12,10 @@ class BackgroundTracking {
     }
     BackgroundGeolocation.onHttp(async (response) => {
       console.log('BackgroundGeolocation [onHttp] ', response.status)
-      // const olds = await AsyncStorage.getItem('locationHttp')
-      // const currentList = JSON.parse(olds || '[]')
-      // currentList.push({ timestamp: moment().toISOString(), ...response })
-      // await AsyncStorage.setItem('locationHttp', JSON.stringify(currentList))
+      const olds = await AsyncStorage.getItem('locationHttp')
+      const currentList = JSON.parse(olds || '[]')
+      currentList.push({ timestamp: moment().toISOString(), ...response })
+      await AsyncStorage.setItem('locationHttp', JSON.stringify(currentList))
     })
   }
 

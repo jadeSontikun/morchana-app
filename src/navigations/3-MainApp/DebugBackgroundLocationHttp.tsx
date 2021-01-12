@@ -31,7 +31,9 @@ export const DebugBackgroundLocationHttp = () => {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}
         >
-          {(logs || []).map((log: any) => <Text key={log.timestamp} style={{ fontSize: FONT_SIZES[200] * 0.75 }}>{log}</Text>)}
+          {(logs || []).map((log: any) => <Text key={log.timestamp} style={{ fontSize: FONT_SIZES[200] * 0.75 }}>
+            {log.timestamp} - [HTTP] {log.status}
+          </Text>)}
         </ScrollView>
         <View
           style={{
