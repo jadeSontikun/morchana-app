@@ -17,11 +17,11 @@ export const DebugBackgroundLocationHttp = () => {
     let interval = setInterval(() => {
       AsyncStorage.getItem('locationHttp').then((log) => {
         if (!log) {
-          return;
+          return
         }
-        setLogs(JSON.parse(log))
-      });
-    }, (1000))
+        setLogs(JSON.parse(log || '[]'))
+      })
+    }, 1000)
     return () => clearInterval(interval)
   })
 
@@ -36,18 +36,24 @@ export const DebugBackgroundLocationHttp = () => {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}
         >
-          {(logs || []).map((log) => (
-            <Text style={{
-              fontSize: FONT_SIZES[200] * 0.75
-            }}>
-              {log}</Text>
+          {(logs || []).map((log: any) => (
+            <Text
+              key={log.key}
+              style={{
+                fontSize: FONT_SIZES[200] * 0.75,
+              }}
+            >
+              {log}
+            </Text>
           ))}
         </ScrollView>
-        <View style={{
-          alignItems: 'center',
-          paddingHorizontal: normalize(16),
-          marginBottom: 16,
-        }}>
+        <View
+          style={{
+            alignItems: 'center',
+            paddingHorizontal: normalize(16),
+            marginBottom: 16,
+          }}
+        >
           <PrimaryButton
             title={I18n.t('close')}
             style={{ width: '100%' }}

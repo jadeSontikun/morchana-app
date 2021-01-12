@@ -3,7 +3,7 @@ import { getAnonymousHeaders } from '../api'
 import { Platform } from 'react-native'
 import { API_URL } from '../config'
 import I18n from '../../i18n/i18n'
-import AsyncStorage from "@react-native-community/async-storage"
+import AsyncStorage from '@react-native-community/async-storage'
 import moment from 'moment'
 class BackgroundTracking {
   setup(startImmediately?: boolean) {
@@ -12,8 +12,17 @@ class BackgroundTracking {
     }
     BackgroundGeolocation.onHttp(async (response) => {
       console.log('BackgroundGeolocation [onHttp] ', response.status)
-      const olds = await AsyncStorage.getItem('locationHttp');
-      const logs = olds ? [...JSON.parse(olds), { timestamp: moment().toISOString(), ...response }] : [];
+      const olds = await AsyncStorage.getItem('locationHttp')
+      const logs = olds
+        ? [
+            ...JSON.parse(olds),
+            {
+              key: moment().unix(),
+              timestamp: moment().toISOString(),
+              ...response,
+            },
+          ]
+        : []
       await AsyncStorage.setItem('locationHttp', JSON.stringify(logs))
     })
   }
