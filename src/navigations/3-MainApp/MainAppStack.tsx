@@ -2,17 +2,15 @@ import React from 'react'
 import { Text } from 'react-native'
 import AntIcon from 'react-native-vector-icons/AntDesign'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import {
-  createBottomTabNavigator,
-  createStackNavigator,
-} from 'react-navigation'
+import { createBottomTabNavigator } from 'react-navigation-tabs'
+import { createStackNavigator } from 'react-navigation-stack'
 import { COLORS, FONT_FAMILY, FONT_SIZES } from '../../styles'
 import { MainApp } from './MainApp'
 import { MainAppFaceCamera } from './MainAppFaceCamera'
 import { QRCodeScan } from './QRCodeScan'
 import { Settings } from './Settings'
 
-import I18n from '../../../i18n/i18n';
+import I18n from '../../../i18n/i18n'
 
 const TabBarLabel = ({ title, focused }) => {
   return (
@@ -116,5 +114,7 @@ export const MainAppStack = createStackNavigator(
     MainApp: MainAppTab,
     MainAppFaceCamera,
   },
-  { headerMode: 'none' },
+  {
+    headerMode: 'none',
+  },
 )

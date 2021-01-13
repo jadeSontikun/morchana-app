@@ -1,9 +1,11 @@
-import React from 'react'
-import { createStackNavigator } from 'react-navigation'
-import { MockScreen } from '../MockScreen'
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from 'react-navigation-stack'
 import { QuestionaireForm } from './QuestionaireForm'
 import { QuestionaireSummary } from './QuestionaireSummary'
 import { QuestionaireHome } from './QuestionaireHome'
+import { Platform } from 'react-native'
 
 export const QuestionaireStack = createStackNavigator(
   {
@@ -11,12 +13,18 @@ export const QuestionaireStack = createStackNavigator(
     QuestionaireForm: {
       screen: QuestionaireForm,
       navigationOptions: {
-        gesturesEnabled: false,
+        gestureEnabled: false,
       },
     },
-    QuestionaireSummary: QuestionaireSummary
+    QuestionaireSummary: QuestionaireSummary,
   },
   {
     headerMode: 'none',
+    defaultNavigationOptions: {
+      cardStyleInterpolator:
+        Platform.OS === 'ios'
+          ? CardStyleInterpolators.forHorizontalIOS
+          : CardStyleInterpolators.forFadeFromBottomAndroid,
+    },
   },
 )

@@ -1,4 +1,9 @@
-import { createStackNavigator } from 'react-navigation'
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from 'react-navigation-stack'
+import { Platform } from 'react-native'
+
 import { AuthPhone } from './AuthPhone'
 import { AuthOTP } from './AuthOTP'
 import { OnboardPhone } from './OnboardPhone'
@@ -14,6 +19,12 @@ export const AuthStack = createStackNavigator(
   },
   {
     headerMode: 'none',
-    mode: 'modal'
+    mode: 'modal',
+    defaultNavigationOptions: {
+      cardStyleInterpolator:
+        Platform.OS === 'ios'
+          ? CardStyleInterpolators.forHorizontalIOS
+          : CardStyleInterpolators.forFadeFromBottomAndroid,
+    },
   },
 )

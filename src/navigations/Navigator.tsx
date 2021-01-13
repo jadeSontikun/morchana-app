@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
-import { View } from 'react-native'
-
+import { View, Platform } from 'react-native'
+import { StackActions, NavigationActions } from 'react-navigation'
 import {
   createStackNavigator,
-  StackActions,
-  NavigationActions,
-} from 'react-navigation'
+  CardStyleInterpolators,
+} from 'react-navigation-stack'
+
 import { COLORS } from '../styles'
 import { AuthStack } from './1-Auth/AuthStack'
 import { OnboardingStack } from './2-Onboarding/OnboardingStack'
@@ -32,7 +32,7 @@ const Root = ({ navigation }) => {
       //       : 'Questionaire'
       //     : 'Onboarding'
       //   : 'Home'
-      
+
       const routeName = isSkipRegistration
         ? onboarded
           ? 'MainApp'
@@ -51,6 +51,7 @@ const Root = ({ navigation }) => {
       navigation.dispatch(action)
     }
     redirect()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return <View style={{ flex: 1, backgroundColor: COLORS.PRIMARY_DARK }} />
@@ -90,5 +91,11 @@ export default createStackNavigator(
     initialRouteName: 'Root',
     mode: 'modal',
     headerMode: 'none',
+    defaultNavigationOptions: {
+      cardStyleInterpolator:
+        Platform.OS === 'ios'
+          ? CardStyleInterpolators.forHorizontalIOS
+          : CardStyleInterpolators.forFadeFromBottomAndroid,
+    },
   },
 )

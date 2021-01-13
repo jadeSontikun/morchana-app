@@ -1,6 +1,8 @@
-import React from 'react'
-import { createStackNavigator } from 'react-navigation'
-import { MockScreen } from '../MockScreen'
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from 'react-navigation-stack'
+
 import { OnboardLocation } from './OnboardLocation'
 import { OnboardFace } from './OnboardFace'
 import { OnboardFaceCamera } from './OnboardFaceCamera'
@@ -8,6 +10,7 @@ import { OnboardProgressing } from './OnboardProgressing'
 import { OnboardComplete } from './OnboardComplete'
 import { OnboardBluetooth } from './OnboardBluetooth'
 import { OnboardNotification } from './OnboardNotification'
+import { Platform } from 'react-native'
 
 const OnboardFaceStack = createStackNavigator(
   {
@@ -28,17 +31,23 @@ export const OnboardingStack = createStackNavigator(
     OnboardProgressing: {
       screen: OnboardProgressing,
       navigationOptions: {
-        gesturesEnabled: false,
+        gestureEnabled: false,
       },
     },
     OnboardComplete: {
       screen: OnboardComplete,
       navigationOptions: {
-        gesturesEnabled: false,
+        gestureEnabled: false,
       },
     },
   },
   {
     headerMode: 'none',
+    defaultNavigationOptions: {
+      cardStyleInterpolator:
+        Platform.OS === 'ios'
+          ? CardStyleInterpolators.forHorizontalIOS
+          : CardStyleInterpolators.forFadeFromBottomAndroid,
+    },
   },
 )
