@@ -79,15 +79,15 @@ export const Settings = () => {
                   </Text>
                 </View>
               </TouchableHighlight>
-              {/* <TouchableHighlight
-                onPress={() => navigation.navigate('Questionaire')}
+               <TouchableHighlight
+                onPress={() => navigation.navigate('DebugBackgroundLocation')}
               >
                 <View style={styles.section}>
                   <Text style={styles.sectionText}>
-                    {I18n.t('do_questionaire_again')}
+                  Debug Background Location
                   </Text>
                 </View>
-              </TouchableHighlight> */}
+              </TouchableHighlight> 
               <TouchableHighlight
                 onPress={() => navigation.navigate('ChangeLanguage')}
               >

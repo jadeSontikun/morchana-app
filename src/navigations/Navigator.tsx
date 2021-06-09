@@ -17,6 +17,7 @@ import { HomeStack } from './0-Home/HomeStack'
 import { WebviewScreen } from './Webview'
 import { ChangeLanguageScreen } from './ChangeLanguage'
 import { Debug } from './3-MainApp/Debug'
+import { DebugBackgroundLocation } from './3-MainApp/DebugBackgroundLocation'
 
 const Root = ({ navigation }) => {
   useEffect(() => {
@@ -85,6 +86,9 @@ export default createStackNavigator(
     },
     ChangeLanguage: {
       screen: ChangeLanguageScreen,
+    },
+    DebugBackgroundLocation: {
+      screen: DebugBackgroundLocation,
     },
   },
   {

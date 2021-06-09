@@ -9,27 +9,32 @@ export const getNotifications = async (param: {
   limit?: number
 }) => {
   try {
-    const res = await fetch(
+    const url =
       NOTIFICATION_API_URL +
-        '/notifications' +
-        (param
-          ? `?${new URLSearchParams(param as Record<string, string>)}`
-          : ''),
-      {
-        sslPinning: {
-          certs: [SSL_PINNING_CERT_NAME],
-        },
-        headers: getAnonymousHeaders(),
-        method: 'GET',
+      '/notifications' +
+      (param ? `?${new URLSearchParams(param as Record<string, string>)}` : '')
+    console.log('url', url, {
+      sslPinning: {
+        certs: [SSL_PINNING_CERT_NAME],
       },
-    )
+      headers: getAnonymousHeaders(),
+      method: 'GET',
+    })
+
+    const res = await fetch(url, {
+      sslPinning: {
+        certs: [SSL_PINNING_CERT_NAME],
+      },
+      headers: getAnonymousHeaders(),
+      method: 'GET',
+    })
     const json = await res.json()
 
     if (_.isArray(json)) {
       return json as NotificationHistoryModel[]
     }
   } catch (error) {
-    // console.error('Failed', json);
+    console.error('Failed', error)
   }
 
   return []

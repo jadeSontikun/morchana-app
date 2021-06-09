@@ -15,7 +15,9 @@ export const DebugBackgroundLocation = () => {
 
   useEffect(() => {
     let interval = setInterval(() => {
+      console.log('DebugBackgroundLocation useEffect')
       BackgroundGeolocation.logger.getLog().then((log) => {
+        console.log('DebugBackgroundLocation useEffect setLog', log)
         setLogs(log)
       });
     }, (1000))
