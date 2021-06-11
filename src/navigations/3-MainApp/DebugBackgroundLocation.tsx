@@ -12,17 +12,39 @@ import I18n from '../../../i18n/i18n'
 export const DebugBackgroundLocation = () => {
   const navigation = useNavigation()
   const [logs, setLogs] = useState('')
+  const logRef = React.useRef(logs)
 
   useEffect(() => {
-    let interval = setInterval(() => {
-      console.log('DebugBackgroundLocation useEffect')
-      BackgroundGeolocation.logger.getLog().then((log) => {
-        console.log('DebugBackgroundLocation useEffect setLog', log)
-        setLogs(log)
-      });
-    }, (1000))
-    return () => clearInterval(interval)
-  })
+    // let interval = setInterval(() => {
+    //   console.log('DebugBackgroundLocation useEffect')
+    //   BackgroundGeolocation.logger.getLog().then((log) => {
+    //     console.log('DebugBackgroundLocation useEffect setLog', log)
+    //     setLogs(log)
+    //   });
+    // }, (1000))
+    // return () => clearInterval(interval)
+
+    BackgroundGeolocation.onHttp((httpEvent) => {
+      console.log('[http] ', httpEvent.success, httpEvent.status)
+      var json: any = null
+      try {
+        json = JSON.parse(httpEvent.responseText)
+      } catch (e) {
+        console.log('error', e)
+      }
+
+      const locations = json.locations
+      if (!Array.isArray(locations)) return
+
+      const msg = locations.map((loc) => {
+        console.log(loc);
+        return `timestamp=${loc.timestamp} latitude=${loc.coords.latitude} longitude=${loc.coords.longitude}`
+      })
+
+      logRef.current += msg.join('\n') + '\nSENT : ' + new Date().toISOString() + '\n'
+      setLogs(logRef.current)
+    })
+  }, [])
 
   return (
     <MyBackground variant="light">
@@ -35,15 +57,22 @@ export const DebugBackgroundLocation = () => {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}
         >
-          <Text style={{
-            fontSize: FONT_SIZES[200] * 0.75
-          }}>{logs}</Text>
+          <Text
+            selectable
+            style={{
+              fontSize: FONT_SIZES[200] * 0.75,
+            }}
+          >
+            {logs}
+          </Text>
         </ScrollView>
-        <View style={{
-          alignItems: 'center',
-          paddingHorizontal: normalize(16),
-          marginBottom: 16,
-        }}>
+        <View
+          style={{
+            alignItems: 'center',
+            paddingHorizontal: normalize(16),
+            marginBottom: 16,
+          }}
+        >
           <PrimaryButton
             title={I18n.t('close')}
             style={{ width: '100%' }}
@@ -117,4 +146,3 @@ const styles = StyleSheet.create({
     marginRight: 24,
   },
 })
- 

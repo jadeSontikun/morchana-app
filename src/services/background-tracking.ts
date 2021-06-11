@@ -25,7 +25,7 @@ class BackgroundTracking {
       deferTime: 60 * 1000,
 
       // All
-      locationUpdateInterval: 30 * 60 * 1000,
+      locationUpdateInterval: 15 * 60 * 1000,
       distanceFilter: Platform.OS === 'android' ? 0 : 25,
       reset: true,
       logLevel: BackgroundGeolocation.LOG_LEVEL_INFO,
