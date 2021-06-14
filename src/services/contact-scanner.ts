@@ -3,6 +3,7 @@ import { scan } from '../api'
 import { backgroundTracking } from './background-tracking'
 import BackgroundGeolocation from 'react-native-background-geolocation'
 import _ from 'lodash'
+import AsyncStorage from '@react-native-community/async-storage'
 class ScanManager {
   ttl?: number
   list: string[] = []
@@ -12,12 +13,20 @@ class ScanManager {
   oldestItemTS?: number
   oldestBeaconFoundTS?: number
   type: 'bluetooth' | 'qrscan'
-  constructor({ ttl, locationAccuracy, type }: { ttl?: number, locationAccuracy?: number, type: 'bluetooth' | 'qrscan' }) {
+  constructor({
+    ttl,
+    locationAccuracy,
+    type,
+  }: {
+    ttl?: number
+    locationAccuracy?: number
+    type: 'bluetooth' | 'qrscan'
+  }) {
     this.locationAccuracy = locationAccuracy
     this.ttl = ttl
     this.type = type
     let prevState
-    AppState.addEventListener('change', state => {
+    AppState.addEventListener('change', (state) => {
       if (prevState !== state) {
         if (state === 'background') {
           this.upload() // trigger upload immediately when user go to background
@@ -33,13 +42,16 @@ class ScanManager {
   }
 
   maskBeaconFound() {
-    if (!this.oldestBeaconFoundTS || (Date.now() - this.oldestBeaconFoundTS) > (30 * 1000)) {
+    if (
+      !this.oldestBeaconFoundTS ||
+      Date.now() - this.oldestBeaconFoundTS > 30 * 1000
+    ) {
       this.oldestBeaconFoundTS = Date.now()
     }
   }
 
   add(anonymousId: string): boolean {
-    if (this.list.find(id => id === anonymousId)) {
+    if (this.list.find((id) => id === anonymousId)) {
       return false
     }
     this.list.push(anonymousId)
@@ -58,17 +70,33 @@ class ScanManager {
       clearTimeout(this.timeout)
       delete this.timeout
       const oldestItemTS = this.oldestItemTS
+
+      AsyncStorage.getItem('scanner_logs').then((logs) => {
+        AsyncStorage.setItem(
+          'scanner_logs',
+          (logs ?? '') +
+            '***** UPLOAD LIST NEARBY: ******' +
+            oldestItemTS +
+            '\n' +
+            uploadList.map((a) => JSON.stringify(a)).join('\n') +
+            '\n',
+        )
+      })
       try {
         delete this.oldestItemTS
         delete this.oldestBeaconFoundTS
         const location = await backgroundTracking.getLocation({
           desiredAccuracy: this.locationAccuracy,
         })
-        await scan(uploadList, {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          accuracy: location.coords.accuracy,
-        }, this.type)
+        await scan(
+          uploadList,
+          {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            accuracy: location.coords.accuracy,
+          },
+          this.type,
+        )
         this.latestUploadTS = Date.now()
       } catch (err) {
         console.log(err)

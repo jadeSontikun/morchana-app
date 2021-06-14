@@ -12,11 +12,15 @@ import AsyncStorage from '@react-native-community/async-storage'
 export const DebugBackgroundLocation = () => {
   const navigation = useNavigation()
   const [logs, setLogs] = useState('')
+  const [logs2, setLogs2] = useState('')
 
   useEffect(() => {
     const updateLog = () => {
       AsyncStorage.getItem('location_logs').then((storedLogs) => {
         setLogs(storedLogs ?? '')
+      })
+      AsyncStorage.getItem('scanner_logs').then((storedLogs) => {
+        setLogs2('start blutooth\n' + (storedLogs ?? ''))
       })
     }
     let interval = setInterval(() => {
@@ -46,6 +50,19 @@ export const DebugBackgroundLocation = () => {
             }}
           >
             {logs}
+          </Text>
+        </ScrollView>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={styles.scrollView}
+        >
+          <Text
+            selectable
+            style={{
+              fontSize: FONT_SIZES[200] * 0.75,
+            }}
+          >
+            {logs2}
           </Text>
         </ScrollView>
         <View
@@ -123,6 +140,7 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   scrollView: {
+    height: 300,
     marginTop: 24,
     marginLeft: 24,
     marginRight: 24,

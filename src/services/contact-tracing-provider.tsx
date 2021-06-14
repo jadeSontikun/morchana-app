@@ -8,6 +8,7 @@ import {
 import { requestLocationPermission } from '../utils/Permission'
 import { beaconLookup } from './beacon-lookup'
 import { beaconScanner, bluetoothScanner } from './contact-scanner'
+import AsyncStorage from '@react-native-community/async-storage'
 
 const eventEmitter = new NativeEventEmitter(NativeModules.ContactTracerModule)
 
@@ -84,9 +85,9 @@ export class ContactTracerProvider extends React.Component<
     this.isInited = true
     const anonymousId = this.props.anonymousId
     this.setState({ anonymousId: anonymousId })
-    NativeModules.ContactTracerModule.setUserId(
-      anonymousId,
-    ).then((anonymousId) => {})
+    NativeModules.ContactTracerModule.setUserId(anonymousId).then(
+      (anonymousId) => {},
+    )
 
     // Check if Tracer Service has been enabled
     NativeModules.ContactTracerModule.isTracerServiceEnabled()
@@ -289,6 +290,13 @@ export class ContactTracerProvider extends React.Component<
     this.appendStatusText('***** RSSI: ' + e['rssi'])
     this.appendStatusText('***** Found Nearby Device: ' + e['name'])
     this.appendStatusText('')
+
+    AsyncStorage.getItem('scanner_logs').then((logs) => {
+      AsyncStorage.setItem(
+        'scanner_logs',
+        (logs ?? '') + '***** Found Nearby Device: ' + e['name'] + '\n',
+      )
+    })
     /* broadcast */
     console.log('broadcast:' + e['name'])
     bluetoothScanner.add(e['name'])
@@ -304,19 +312,37 @@ export class ContactTracerProvider extends React.Component<
     this.appendStatusText('***** minor: ' + e['minor'])
     this.appendStatusText('')
 
-    let oldestBeaconFoundTS = beaconScanner.oldestBeaconFoundTS || 0;
-    if ((Date.now() - oldestBeaconFoundTS) > (30 * 1000) || !oldestBeaconFoundTS) {
-      const { anonymousId, name } = await beaconLookup.getBeaconInfo(e.uuid, e.major, e.minor)
+    AsyncStorage.getItem('scanner_logs').then((logs) => {
+      AsyncStorage.setItem(
+        'scanner_logs',
+        (logs ?? '') + '***** Found Beacon: ' + e['uuid'] + '\n',
+      )
+    })
+
+    let oldestBeaconFoundTS = beaconScanner.oldestBeaconFoundTS || 0
+    if (Date.now() - oldestBeaconFoundTS > 30 * 1000 || !oldestBeaconFoundTS) {
+      const { anonymousId, name } = await beaconLookup.getBeaconInfo(
+        e.uuid,
+        e.major,
+        e.minor,
+      )
       if (anonymousId) {
         this.appendStatusText('***** anonymousId: ' + anonymousId)
         this.appendStatusText('***** name: ' + name)
-        this.setState({ beaconLocationName: { anonymousId, name, time: Date.now(), uuid: e.uuid } })
+        this.setState({
+          beaconLocationName: {
+            anonymousId,
+            name,
+            time: Date.now(),
+            uuid: e.uuid,
+          },
+        })
         beaconScanner.maskBeaconFound()
         beaconScanner.add(anonymousId)
       }
     }
 
-    let oldestItemTS = beaconScanner.oldestItemTS || 0;
+    let oldestItemTS = beaconScanner.oldestItemTS || 0
     if (Date.now() - oldestItemTS > 30 * 60 * 1000) {
       beaconScanner.upload()
     }
