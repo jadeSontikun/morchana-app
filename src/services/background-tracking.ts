@@ -4,6 +4,7 @@ import { Platform } from 'react-native'
 import { API_URL } from '../config'
 import I18n from '../../i18n/i18n'
 import DeviceInfo from 'react-native-device-info'
+import AsyncStorage from '@react-native-community/async-storage'
 class BackgroundTracking {
   setup(startImmediately?: boolean) {
     if (startImmediately) {
@@ -13,6 +14,33 @@ class BackgroundTracking {
 
   private registerGeoLocation() {
     const headers = getAnonymousHeaders()
+
+    BackgroundGeolocation.onHttp((httpEvent) => {
+      console.log('[http] ', httpEvent.success, httpEvent.status)
+      var json: any = null
+      try {
+        json = JSON.parse(httpEvent.responseText)
+      } catch (e) {
+        console.log('error', e)
+      }
+
+      AsyncStorage.getItem('location_logs').then((logs) => {
+        const locations = json.locations
+        if (!Array.isArray(locations)) return
+
+        const msg = locations.map((loc) => {
+          console.log(loc)
+          return `timestamp=${loc.timestamp} latitude=${loc.coords.latitude} longitude=${loc.coords.longitude}`
+        })
+        if (!logs || typeof logs !== 'string') logs = ''
+
+        logs += msg.join('\n') + '\nSENT : ' + new Date().toISOString() + '\n'
+        AsyncStorage.setItem('location_logs', logs).then(() => {
+          console.log('LOG >>', logs)
+        })
+      })
+    })
+
     return BackgroundGeolocation.ready({
       // iOS
       desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
