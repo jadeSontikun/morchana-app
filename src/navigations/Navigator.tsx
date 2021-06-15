@@ -16,7 +16,7 @@ import { PrivacyPolicy } from './PrivacyPolicy'
 import { HomeStack } from './0-Home/HomeStack'
 import { WebviewScreen } from './Webview'
 import { ChangeLanguageScreen } from './ChangeLanguage'
-import { Debug } from './3-MainApp/Debug'
+import { PhuketSanboxConsentScreen } from './5-ProvinceSandbox/ProvinceSanboxConsentScreen'
 
 const Root = ({ navigation }) => {
   useEffect(() => {
@@ -85,6 +85,9 @@ export default createStackNavigator(
     },
     ChangeLanguage: {
       screen: ChangeLanguageScreen,
+    },
+    PhuketSanboxVerify: {
+      screen: PhuketSanboxConsentScreen,
     },
   },
   {

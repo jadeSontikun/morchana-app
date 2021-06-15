@@ -97,6 +97,13 @@ export const Settings = () => {
                   </Text>
                 </View>
               </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => navigation.navigate('PhuketSanboxVerify')}
+              >
+                <View style={styles.section}>
+                  <Text style={styles.sectionText}>{I18n.t('phuket_sanbox_verify')}</Text>
+                </View>
+              </TouchableHighlight>
               {!isRegistered && (
                 <TouchableHighlight
                   onPress={() =>
