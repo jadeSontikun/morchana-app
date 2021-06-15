@@ -17,3 +17,14 @@ export const AuthStack = createStackNavigator(
     mode: 'modal'
   },
 )
+
+export const PhuketAuthStack = createStackNavigator(
+  {
+    AuthPhone,
+    AuthOTP,
+  },
+  {
+    headerMode: 'none',
+    mode: 'modal'
+  },
+)

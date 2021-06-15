@@ -12,6 +12,8 @@ interface ApplicationStateData {
   isAllowNotification?: boolean
   createdDate?: string
   updateProfileDate?: string
+
+  phuketAgreementAccepted?: boolean
 }
 class ApplicationState extends HookState {
   data: ApplicationStateData

@@ -15,6 +15,7 @@ import { useContactTracer } from '../../services/contact-tracing-provider'
 import { useNavigation } from 'react-navigation-hooks'
 import { userPrivateData } from '../../state/userPrivateData'
 import I18n from '../../../i18n/i18n'
+import { applicationState } from '../../state/app-state'
 
 export const Settings = () => {
   const navigation = useNavigation()
@@ -98,10 +99,17 @@ export const Settings = () => {
                 </View>
               </TouchableHighlight>
               <TouchableHighlight
-                onPress={() => navigation.navigate('PhuketSanboxVerify')}
+                onPress={() =>
+                  navigation.navigate(
+                    applicationState.getData('phuketAgreementAccepted')
+                      ? 'PhuketAuth'
+                      : 'PhuketSanboxVerify',
+                  )
+                }
               >
                 <View style={styles.section}>
-                  <Text style={styles.sectionText}>{I18n.t('phuket_sanbox_verify')}</Text>
+                  <Text style={styles.sectionText}>{I18n.t('phuket_sandbox_setting')}</Text>
+                  <Text style={styles.sectionText2}>{I18n.t('phuket_sandbox_setting2')}</Text>
                 </View>
               </TouchableHighlight>
               {!isRegistered && (
@@ -164,6 +172,11 @@ const styles = StyleSheet.create({
   sectionText: {
     fontSize: FONT_SIZES[600],
     color: '#000000',
+    fontFamily: FONT_FAMILY,
+  },
+  sectionText2: {
+    fontSize: FONT_SIZES[600],
+    color: 'red',
     fontFamily: FONT_FAMILY,
   },
   sectionDescription: {

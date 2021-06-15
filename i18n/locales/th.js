@@ -271,4 +271,6 @@ export default {
   beacon_header: 'คุณได้พบ Beacon',
   notification_history: 'แจ้งเตือน',
   notification_history_empty: 'ไม่มีการแจ้งเตือน',
+  phuket_sandbox_setting: 'ยืนยันตัวตนด้วยโทรศัพท์มือถือ',
+	phuket_sandbox_setting2: 'จังหวัดภูเก็ต',
 }

@@ -7,7 +7,7 @@ import {
   NavigationActions,
 } from 'react-navigation'
 import { COLORS } from '../styles'
-import { AuthStack } from './1-Auth/AuthStack'
+import { AuthStack, PhuketAuthStack } from './1-Auth/AuthStack'
 import { OnboardingStack } from './2-Onboarding/OnboardingStack'
 import { MainAppStack } from './3-MainApp/MainAppStack'
 import { applicationState } from '../state/app-state'
@@ -67,6 +67,9 @@ export default createStackNavigator(
     },
     Auth: {
       screen: AuthStack,
+    },
+    PhuketAuth: {
+      screen: PhuketAuthStack,
     },
     Onboarding: {
       screen: OnboardingStack,
