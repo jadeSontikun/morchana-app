@@ -152,7 +152,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 41
-        versionName "2.0.3"
+        versionName "2.1.0"
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general' 
         resValue "string", "build_config_package", "com.thaialert.app"
