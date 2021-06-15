@@ -8,6 +8,7 @@ import {
 import { requestLocationPermission } from '../utils/Permission'
 import { beaconLookup } from './beacon-lookup'
 import { beaconScanner, bluetoothScanner } from './contact-scanner'
+import BackgroundGeolocation from 'react-native-background-geolocation'
 
 const eventEmitter = new NativeEventEmitter(NativeModules.ContactTracerModule)
 
@@ -20,6 +21,7 @@ interface ContactTracerProps {
 interface ContactTracerState {
   isServiceEnabled: boolean
   isLocationPermissionGranted: boolean
+  locationPermissionLevel?: number
   isBluetoothOn: boolean
   anonymousId: string
   statusText: string
@@ -47,6 +49,7 @@ export class ContactTracerProvider extends React.Component<
     this.state = {
       isServiceEnabled: false,
       isLocationPermissionGranted: false,
+      locationPermissionLevel: 0,
       isBluetoothOn: false,
       anonymousId: '',
       statusText: this.statusText,
@@ -243,6 +246,25 @@ export class ContactTracerProvider extends React.Component<
         this.onNearbyBeaconFoundReceived,
       )
     }
+
+    BackgroundGeolocation.onProviderChange((event) => {
+      console.log("[onProviderChange: ", event);
+    
+      switch(event.status) {
+        case BackgroundGeolocation.AUTHORIZATION_STATUS_DENIED:
+          console.log("- Location authorization denied");
+          this.setState({locationPermissionLevel: 0})
+          break;
+        case BackgroundGeolocation.AUTHORIZATION_STATUS_ALWAYS:
+          console.log("- Location always granted");
+          this.setState({locationPermissionLevel: 3})
+          break;
+        case BackgroundGeolocation.AUTHORIZATION_STATUS_WHEN_IN_USE:
+          console.log("- Location WhenInUse granted");
+          this.setState({locationPermissionLevel: 4})
+          break;
+      }
+    });
   }
 
   /**

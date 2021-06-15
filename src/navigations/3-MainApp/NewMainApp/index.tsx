@@ -31,7 +31,7 @@ import RNFS from 'react-native-fs'
 export const MainApp = () => {
   const inset = useSafeArea()
   const { qrData, qrState, refreshQR } = useSelfQR()
-  const { beaconLocationName, enable, disable, isServiceEnabled } = useContactTracer()
+  const { beaconLocationName, enable, disable, isServiceEnabled, locationPermissionLevel } = useContactTracer()
   const appVersion = DeviceInfo.getVersion();
   const [location, setLocation] = useState('')
   const popupRef = useRef<NotificationPopup | any>()
@@ -67,6 +67,28 @@ export const MainApp = () => {
             <Text style={styles.textHeader}>
               {qrData && (`${qrData.getCreatedDate().format(I18n.t('fully_date'))}`)}
             </Text>
+
+
+            
+            <View>
+              <FontAwesome
+                name="map-marker"
+                color={COLORS.GRAY_4}
+                size={24}
+                style={{ marginRight: 10 }}
+              />
+              {locationPermissionLevel===3 ? (
+                <View style={{
+                  width: 10,
+                  height: 10,
+                  backgroundColor: COLORS.GREEN,
+                  position: 'absolute',
+                  borderRadius: 50,
+                  borderTopWidth: Math.floor((4 / 100) * 24),
+                  right: Math.floor((8 / 100) * 50)
+                }} />
+              ) : void 0}
+            </View>
             <TouchableOpacity onPress={() => {
               isServiceEnabled ? disable() : enable()
             }}>
