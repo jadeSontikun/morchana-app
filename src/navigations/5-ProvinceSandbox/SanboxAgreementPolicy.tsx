@@ -28,9 +28,9 @@ type Props = {
   navigationKey: string
 }
 
-export const PhuketSanboxConsentScreen: React.FC = () => {
+export const PhuketSanboxAgreementPolicy: React.FC = () => {
   return (
-    <ProvinceSanboxConsentScreen
+    <SandboxAgreementPolicy
       consentMessage="Phuket sanbox consent message"
       appStateKey="phuketAgreementAccepted"
       navigationKey="PhuketAuth"
@@ -38,7 +38,7 @@ export const PhuketSanboxConsentScreen: React.FC = () => {
   )
 }
 
-const ProvinceSanboxConsentScreen: React.FC<Props> = ({
+const SandboxAgreementPolicy: React.FC<Props> = ({
   consentMessage,
   appStateKey,
   navigationKey,
@@ -62,22 +62,8 @@ const ProvinceSanboxConsentScreen: React.FC<Props> = ({
           </View>
         </ScrollView>
       </View>
-      {/* <CheckBox
-        title="ฉันยอมรับ{I18n.t('term_and_conditions')}"
-        containerStyle={{
-          backgroundColor: 'transparent',
-          borderWidth: 0,
-          marginBottom: 16,
-        }}
-        checked={agree}
-        onPress={() => setAgree(!agree)}
-        checkedColor={COLORS.BLUE}
-        textStyle={{ color: COLORS.BLACK_1, fontSize: FONT_SIZES[600], fontWeight:'normal'}}
-        fontFamily={FONT_BOLD}
-      /> */}
       <View style={styles.footer}>
         <PrimaryButton
-          // disabled={!agree}
           title={I18n.t('accept')}
           style={styles.w100}
           containerStyle={styles.buttonContent}

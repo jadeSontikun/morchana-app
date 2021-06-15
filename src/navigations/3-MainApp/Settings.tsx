@@ -32,7 +32,7 @@ export const Settings = () => {
     ? undefined
     : () =>
         navigation.navigate(
-          phuketAgreementAccepted ? 'PhuketAuth' : 'PhuketSanboxVerify',
+          phuketAgreementAccepted ? 'PhuketAuth' : 'PhuketSanboxPolicy',
         )
 
   return (
@@ -224,8 +224,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   checkImg: {
-    width: 36,
-    height: 36,
+    width: 32,
+    height: 32,
   },
   flex1: {
     flex: 1,
