@@ -7,6 +7,7 @@ import {
   Switch,
   ScrollView,
   TouchableHighlight,
+  Image,
 } from 'react-native'
 import { COLORS, FONT_FAMILY, FONT_SIZES } from '../../styles'
 import { MyBackground } from '../../components/MyBackground'
@@ -21,9 +22,18 @@ export const Settings = () => {
   const navigation = useNavigation()
   const { enable, disable, statusText, isServiceEnabled } = useContactTracer()
   const isRegistered = Boolean(userPrivateData.getData('authToken'))
+  const phuketRegistered = Boolean(applicationState.getData('phuketRegistered'))
+  const phuketAgreementAccepted = Boolean(applicationState.getData('phuketAgreementAccepted'))
   const _onPrivacyPolicyClicked = () => {
     navigation.navigate('PrivacyPolicy')
   }
+
+  const onPhuketClick = phuketRegistered
+    ? undefined
+    : () =>
+        navigation.navigate(
+          phuketAgreementAccepted ? 'PhuketAuth' : 'PhuketSanboxVerify',
+        )
 
   return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#F9F9F9' }}>
@@ -98,18 +108,26 @@ export const Settings = () => {
                   </Text>
                 </View>
               </TouchableHighlight>
-              <TouchableHighlight
-                onPress={() =>
-                  navigation.navigate(
-                    applicationState.getData('phuketAgreementAccepted')
-                      ? 'PhuketAuth'
-                      : 'PhuketSanboxVerify',
-                  )
-                }
-              >
+              <TouchableHighlight onPress={onPhuketClick}>
                 <View style={styles.section}>
-                  <Text style={styles.sectionText}>{I18n.t('phuket_sandbox_setting')}</Text>
-                  <Text style={styles.sectionText2}>{I18n.t('phuket_sandbox_setting2')}</Text>
+                  <View style={styles.sandBoxSetting}>
+                    <View style={styles.flex1}>
+                      <Text style={styles.sectionText}>
+                        {I18n.t('phuket_sandbox_setting')}
+                      </Text>
+                      <Text style={styles.sectionText2}>
+                        {I18n.t('phuket_sandbox_setting2')}
+                      </Text>
+                    </View>
+                    {phuketRegistered && (
+                      <View>
+                        <Image
+                          source={require('../../assets/check.png')}
+                          style={styles.checkImg}
+                        />
+                      </View>
+                    )}
+                  </View>
                 </View>
               </TouchableHighlight>
               {!isRegistered && (
@@ -201,4 +219,15 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY,
   },
   scrollView: {},
+  sandBoxSetting: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkImg: {
+    width: 36,
+    height: 36,
+  },
+  flex1: {
+    flex: 1,
+  },
 })
