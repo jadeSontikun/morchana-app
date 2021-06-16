@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -8,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native'
-import { normalize } from 'react-native-elements'
+import { normalize, Button } from 'react-native-elements'
 import { useNavigation } from 'react-navigation-hooks'
 import { FormHeader } from '../../components/Form/FormHeader'
 import { applicationState } from '../../state/app-state'
