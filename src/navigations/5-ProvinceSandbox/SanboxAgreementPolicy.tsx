@@ -22,9 +22,10 @@ import I18n from '../../../i18n/i18n'
 import { PrimaryButton } from '../../components/Button'
 
 type Props = {
-  appStateKey: 'phuketAgreementAccepted' // | 'chiangmaiagreementAccepted'
+  appStateKey: 'phuketAgreementAccepted' // | 'chiangmaiAgreementAccepted'
   consentMessage: string
   navigationKey: string
+  provinceLabel: string
 }
 
 export const PhuketSanboxAgreementPolicy: React.FC = () => {
@@ -33,6 +34,7 @@ export const PhuketSanboxAgreementPolicy: React.FC = () => {
       consentMessage="Phuket sanbox consent message"
       appStateKey="phuketAgreementAccepted"
       navigationKey="PhuketAuth"
+      provinceLabel={'phuket_sandbox_setting2'}
     />
   )
 }
@@ -41,6 +43,7 @@ const SandboxAgreementPolicy: React.FC<Props> = ({
   consentMessage,
   appStateKey,
   navigationKey,
+  provinceLabel,
 }) => {
   const navigation = useNavigation()
 
@@ -49,7 +52,10 @@ const SandboxAgreementPolicy: React.FC<Props> = ({
       <StatusBar backgroundColor={'white'} barStyle="light-content" />
       <FormHeader>
         <View style={styles.header}>
-          <Text style={styles.title}>{I18n.t('term_and_conditions')}</Text>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{I18n.t('term_and_conditions')}</Text>
+            <Text style={styles.provinceLabel}>{I18n.t(provinceLabel)}</Text>
+          </View>
           <Text style={styles.subtitle}>{I18n.t('before_usage')}</Text>
           <Text style={styles.subtitle}>{I18n.t('please_accept_terms')}</Text>
         </View>
@@ -119,7 +125,16 @@ const styles = StyleSheet.create({
     color: COLORS.BLACK_1,
     textAlign: 'center',
   },
-
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  provinceLabel: {
+    color: '#E05436',
+    fontFamily: FONT_BOLD,
+    fontSize: FONT_SIZES[700],
+    paddingLeft: 2,
+  },
   subtitle: {
     fontFamily: FONT_FAMILY,
     fontSize: FONT_SIZES[500],
