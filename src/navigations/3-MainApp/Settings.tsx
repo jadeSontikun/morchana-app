@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   sectionText2: {
     fontSize: FONT_SIZES[600],
-    color: 'red',
+    color: '#E05436',
     fontFamily: FONT_FAMILY,
   },
   sectionDescription: {
