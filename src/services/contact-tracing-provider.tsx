@@ -15,6 +15,7 @@ const eventEmitter = new NativeEventEmitter(NativeModules.ContactTracerModule)
 interface ContactTracerProps {
   anonymousId: string
   isPassedOnboarding: boolean
+  notificationTriggerNumber: number;
 }
 
 interface ContactTracerState {
@@ -24,11 +25,12 @@ interface ContactTracerState {
   anonymousId: string
   statusText: string
   beaconLocationName: any
+  notificationTriggerNumber?: number;
   enable: () => void
   disable: () => void
 }
 
-const Context = React.createContext<ContactTracerState>(null)
+export const ContractTracerContext = React.createContext<ContactTracerState>(null)
 
 export class ContactTracerProvider extends React.Component<
   ContactTracerProps,
@@ -350,13 +352,13 @@ export class ContactTracerProvider extends React.Component<
 
   render() {
     return (
-      <Context.Provider value={this.state}>
+      <ContractTracerContext.Provider value={{...this.state, notificationTriggerNumber:this.props.notificationTriggerNumber}}>
         {this.props.children}
-      </Context.Provider>
+      </ContractTracerContext.Provider>
     )
   }
 }
 
 export const useContactTracer = (): ContactTracerState => {
-  return useContext(Context)
+  return useContext(ContractTracerContext)
 }

@@ -7,6 +7,8 @@ import { getNotifications } from '../../api-notification'
 import { MyBackground } from '../../components/MyBackground'
 import { COLORS, FONT_FAMILY, FONT_SIZES } from '../../styles'
 import I18n from '../../../i18n/i18n'
+import { ContractTracerContext } from '../../services/contact-tracing-provider'
+import { useFocusEffect } from 'react-navigation-hooks'
 
 export interface NotificationHistoryModel {
   title: string
@@ -22,56 +24,22 @@ const PAGE_SIZE = 20
 
 export const NotificationHistory = () => {
   const [history, setHistory] = useState<NotificationHistoryModel[]>([])
-  const [endOfList, setEndOfList] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+
+  const { notificationTriggerNumber } = React.useContext(ContractTracerContext)
 
   const historyRef = React.useRef(history)
   historyRef.current = history
 
-  /*
-const getNotifications = useCallback(
-() =>
-new Promise<NotificationHistoryModel[]>((success) =>
-_.debounce(() => {
-cnt++
-if (cnt > 4) {
-success([])
-return
-}
-
-const mockHistory: NotificationHistoryModel[] = [
-{
-type: 'ALERT',
-title: 'ด่วน กรุณาโทรกลับ',
-message:
-'กรมควบคุมโรคต้องการติดต่อคุณ กรุณาติดต่อกลับด้วยที่เบอร์ 0821920192',
-sendedAt: new Date().toISOString(),
-},
-{
-type: 'INFO',
-title: 'กรอกแบบสอบถาม',
-message:
-'กรุณากรอกแบบสอบถามความพึงพอใจการใช้งาน Link: bitly.com/xieoak',
-sendedAt: new Date().toISOString(),
-},
-{
-type: 'ALERT',
-title: 'สถานะความเสี่ยงถูกเปลี่ยน',
-message:
-'สถานะการติดเชื้อถูกเปลี่ยนเป็น “เสี่ยงมาก” (สีแดง) คลิกเพื่ออ่านสาเหตุ',
-sendedAt: new Date().toISOString(),
-},
-]
-success(mockHistory)
-}, 1000)(),
-),
-[],
-)
-  */
+  useFocusEffect(
+    React.useCallback(() => {
+      getNotifications({ skip: 0, limit: PAGE_SIZE }).then(setHistory)
+    }, []),
+  )
 
   useEffect(() => {
     getNotifications({ skip: 0, limit: PAGE_SIZE }).then(setHistory)
-  }, [])
+  }, [notificationTriggerNumber])
 
   return (
     <MyBackground variant="light">
@@ -81,6 +49,7 @@ success(mockHistory)
           backgroundColor={COLORS.PRIMARY_LIGHT}
         />
         <FlatList
+          key={'list' + (notificationTriggerNumber ?? 0)}
           data={history}
           ListEmptyComponent={() => (
             <View style={styles.emptyTextView}>
@@ -97,12 +66,10 @@ success(mockHistory)
               limit: PAGE_SIZE,
             })
             setHistory(notifications)
-            setEndOfList(false)
             setRefreshing(false)
           }}
           onEndReachedThreshold={0.5}
           onEndReached={async () => {
-            if (endOfList) return
             const newHistory = await getNotifications({
               skip: historyRef.current.length,
               limit: PAGE_SIZE,
