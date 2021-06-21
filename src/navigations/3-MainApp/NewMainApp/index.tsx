@@ -1,32 +1,33 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
-import { COLORS, FONT_BOLD, FONT_FAMILY, FONT_SIZES } from '../../../styles'
-import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
 import {
-  StatusBar,
-  View,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Dimensions,
   ActivityIndicator,
+  Alert,
+  Dimensions,
+  Image,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
   TouchableWithoutFeedback,
+  View,
 } from 'react-native'
-import { QR_STATE, SelfQR, useSelfQR } from '../../../state/qr'
-import { pushNotification } from '../../../services/notification'
 import DeviceInfo from 'react-native-device-info'
 import { Text } from 'react-native-elements'
+import RNFS from 'react-native-fs'
 import NotificationPopup from 'react-native-push-notification-popup'
-import { BeaconFoundPopupContent } from '../BeaconFoundPopup'
-import { useContactTracer } from '../../../services/contact-tracing-provider'
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
+import Sizer from 'react-native-size'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import I18n from '../../../../i18n/i18n'
-import Sizer from 'react-native-size'
-import { QRStateText } from './QRStateText'
 import { CircularProgressAvatar } from '../../../../src/components/CircularProgressAvatar'
 import { userPrivateData } from '../../../../src/state/userPrivateData'
 import { useResetTo } from '../../../../src/utils/navigation'
+import { useContactTracer } from '../../../services/contact-tracing-provider'
+import { pushNotification } from '../../../services/notification'
+import { QR_STATE, SelfQR, useSelfQR } from '../../../state/qr'
+import { COLORS, FONT_BOLD, FONT_FAMILY, FONT_SIZES } from '../../../styles'
+import { BeaconFoundPopupContent } from '../BeaconFoundPopup'
+import { QRStateText } from './QRStateText'
 import { UpdateProfileButton } from './UpdateProfileButton'
-import RNFS from 'react-native-fs'
 
 export const MainApp = () => {
   const inset = useSafeArea()
@@ -50,7 +51,7 @@ export const MainApp = () => {
         slideOutTime: 20 * 1000,
       })
     }
-  }, [beaconLocationName])
+  }, [beaconLocationName, location])
 
   useEffect(() => {
     pushNotification.requestPermissions()
@@ -84,7 +85,6 @@ export const MainApp = () => {
               {qrData &&
                 `${qrData.getCreatedDate().format(I18n.t('fully_date'))}`}
             </Text>
-
             <View>
               <FontAwesome
                 name="map-marker"
@@ -110,7 +110,25 @@ export const MainApp = () => {
             </View>
             <TouchableOpacity
               onPress={() => {
-                isServiceEnabled ? disable() : enable()
+                if (isServiceEnabled) {
+                  Alert.alert(
+                    I18n.t('bluetooth_disable_alert_title'),
+                    I18n.t('bluetooth_disable_alert_message'),
+                    [
+                      {
+                        text: I18n.t('cancel'),
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                      },
+                      {
+                        text: I18n.t('bluetooth_disable_alert_accept'),
+                        onPress: disable,
+                      },
+                    ],
+                  )
+                } else {
+                  enable()
+                }
               }}
             >
               <FontAwesome
@@ -257,6 +275,7 @@ const styles = StyleSheet.create({
   },
   cardHeader: {
     flex: 1,
+    height: 128,
     flexDirection: 'row',
     alignContent: 'center',
     alignItems: 'center',
@@ -396,11 +415,12 @@ const AvatarProfile = ({ qr, qrState }: { qr: SelfQR; qrState: QR_STATE }) => {
     ? COLORS.ORANGE_2
     : COLORS.GRAY_2
 
-  const avatarWidth = Math.min(
-    100,
-    Math.floor((20 / 100) * Dimensions.get('screen').height),
-  )
+  // const avatarWidth = Math.min(
+  //   100,
+  //   Math.floor((20 / 100) * Dimensions.get('screen').height),
+  // )
 
+  const avatarWidth = 100
   useEffect(() => {
     RNFS.exists(faceURI).then((exists) => {
       console.log('exists', exists)
@@ -421,7 +441,7 @@ const AvatarProfile = ({ qr, qrState }: { qr: SelfQR; qrState: QR_STATE }) => {
           marginTop: 10,
         }}
       >
-        <View style={{}}>
+        <View>
           <CircularProgressAvatar
             key={qr ? qr.getCreatedDate() : 0}
             image={faceURI ? { uri: faceURI } : void 0}

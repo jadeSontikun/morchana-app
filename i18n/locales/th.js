@@ -272,5 +272,8 @@ export default {
   notification_history: 'แจ้งเตือน',
   notification_history_empty: 'ไม่มีการแจ้งเตือน',
   phuket_sandbox_setting: 'ยืนยันตัวตนด้วยโทรศัพท์มือถือ',
-	phuket_sandbox_setting2: 'จังหวัดภูเก็ต',
+  phuket_sandbox_setting2: 'จังหวัดภูเก็ต',
+  bluetooth_disable_alert_title: 'bluetooth_disable_alert_title',
+  bluetooth_disable_alert_message: 'bluetooth_disable_alert_message',
+  bluetooth_disable_alert_accept: 'bluetooth_disable_alert_accept',
 }

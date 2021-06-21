@@ -273,6 +273,9 @@ export default {
   beacon_header: 'Found Beacon',
   notification_history: 'Notification',
   notification_history_empty: 'This list is empty.',
-	phuket_sandbox_setting: 'Verify with phone',
+  phuket_sandbox_setting: 'Verify with phone',
   phuket_sandbox_setting2: 'Phuket',
+  bluetooth_disable_alert_title: 'bluetooth_disable_alert_title',
+  bluetooth_disable_alert_message: 'bluetooth_disable_alert_message',
+  bluetooth_disable_alert_accept: 'bluetooth_disable_alert_accept',
 }
