@@ -85,74 +85,51 @@ export const MainApp = () => {
               {qrData &&
                 `${qrData.getCreatedDate().format(I18n.t('fully_date'))}`}
             </Text>
-            <View>
-              <FontAwesome
-                name="map-marker"
-                color={COLORS.GRAY_4}
-                size={24}
-                style={{ marginRight: 10 }}
-              />
-              {locationPermissionLevel === 3 ? (
-                <View
-                  style={{
-                    width: 10,
-                    height: 10,
-                    backgroundColor: COLORS.GREEN,
-                    position: 'absolute',
-                    borderRadius: 50,
-                    borderTopWidth: Math.floor((4 / 100) * 24),
-                    right: Math.floor((8 / 100) * 50),
-                  }}
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ position: 'relative' }}>
+                <FontAwesome
+                  name="map-marker"
+                  color={COLORS.GRAY_4}
+                  size={24}
+                  style={{ marginRight: 10 }}
                 />
-              ) : (
-                void 0
-              )}
+                {locationPermissionLevel === 3 ? (
+                  <View style={styles.greenDot} />
+                ) : null}
+              </View>
+              <TouchableOpacity
+                style={{ position: 'relative' }}
+                onPress={() => {
+                  if (isServiceEnabled) {
+                    Alert.alert(
+                      I18n.t('bluetooth_disable_alert_title'),
+                      I18n.t('bluetooth_disable_alert_message'),
+                      [
+                        {
+                          text: I18n.t('cancel'),
+                          onPress: () => console.log('Cancel Pressed'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: I18n.t('bluetooth_disable_alert_accept'),
+                          onPress: disable,
+                        },
+                      ],
+                    )
+                  } else {
+                    enable()
+                  }
+                }}
+              >
+                <FontAwesome
+                  name="bluetooth-b"
+                  color={COLORS.GRAY_4}
+                  size={24}
+                  style={{ marginRight: 10 }}
+                />
+                {isServiceEnabled ? <View style={styles.greenDot} /> : null}
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                if (isServiceEnabled) {
-                  Alert.alert(
-                    I18n.t('bluetooth_disable_alert_title'),
-                    I18n.t('bluetooth_disable_alert_message'),
-                    [
-                      {
-                        text: I18n.t('cancel'),
-                        onPress: () => console.log('Cancel Pressed'),
-                        style: 'cancel',
-                      },
-                      {
-                        text: I18n.t('bluetooth_disable_alert_accept'),
-                        onPress: disable,
-                      },
-                    ],
-                  )
-                } else {
-                  enable()
-                }
-              }}
-            >
-              <FontAwesome
-                name="bluetooth-b"
-                color={COLORS.GRAY_4}
-                size={24}
-                style={{ marginRight: 10 }}
-              />
-              {isServiceEnabled ? (
-                <View
-                  style={{
-                    width: 10,
-                    height: 10,
-                    backgroundColor: COLORS.GREEN,
-                    position: 'absolute',
-                    borderRadius: 50,
-                    borderTopWidth: Math.floor((4 / 100) * 24),
-                    right: Math.floor((8 / 100) * 50),
-                  }}
-                />
-              ) : (
-                void 0
-              )}
-            </TouchableOpacity>
           </View>
           <View style={styles.containerCard}>
             <View style={styles.card}>
@@ -295,6 +272,15 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES[600] * 0.85,
     color: COLORS.BLACK_1,
     textAlign: 'center',
+  },
+  greenDot: {
+    width: 10,
+    height: 10,
+    backgroundColor: COLORS.GREEN,
+    position: 'absolute',
+    borderRadius: 50,
+    borderTopWidth: Math.floor((4 / 100) * 24),
+    right: Math.floor((8 / 100) * 50),
   },
 })
 
