@@ -91,11 +91,7 @@ export const mobileParing = async (mobileNo: string, otpCode: string) => {
       certs: [SSL_PINNING_CERT_NAME],
     },
     headers: getAnonymousHeaders(),
-    body: JSON.stringify({
-      otpCode,
-      encryptedMobileNo,
-      deviceId: DeviceInfo.getUniqueId(),
-    }),
+    body: JSON.stringify({ otpCode, encryptedMobileNo }),
   })
   const result = await resp.json()
   if (result.status === 'ok') {

@@ -1,14 +1,15 @@
+import AsyncStorage from '@react-native-community/async-storage'
+import { get, isEmpty } from 'lodash'
+import { Platform } from 'react-native'
 import BackgroundGeolocation, {
   Location,
 } from 'react-native-background-geolocation'
-import { getAnonymousHeaders } from '../api'
-import { Platform } from 'react-native'
-import { API_URL, SSL_PINNING_CERT_NAME, PHUKET_API_URL } from '../config'
-import I18n from '../../i18n/i18n'
 import DeviceInfo from 'react-native-device-info'
-import AsyncStorage from '@react-native-community/async-storage'
-import { isArray, isEmpty } from 'lodash'
 import { fetch } from 'react-native-ssl-pinning'
+import I18n from '../../i18n/i18n'
+import { getAnonymousHeaders } from '../api'
+import { API_URL, PHUKET_API_URL, SSL_PINNING_CERT_NAME } from '../config'
+import { applicationState } from '../state/app-state'
 
 const SECONDARY_SYNC_LOCATION_URL = PHUKET_API_URL
 
@@ -47,17 +48,29 @@ class BackgroundTracking {
     const AUTO_SYNC_THRESHOLD = 10
     const MAX_BATCH_SIZE = 30
 
-    const LOCATION_KEY = 'location-list'
+    const LOCATION_STORAGE_KEY = 'location-list'
 
     BackgroundGeolocation.onLocation(async (location) => {
-      var locations: Location[] = []
+      if (
+        !applicationState.getData('phuketRegistered') &&
+        LOCATION_STORAGE_KEY
+      ) {
+        return
+      }
+
+      var info = null
       try {
-        const jsonStr = await AsyncStorage.getItem(LOCATION_KEY)
-        if (jsonStr) locations = JSON.parse(jsonStr)
-        if (!isArray(locations)) {
-          locations = []
-        }
+        const jsonStr = await AsyncStorage.getItem(LOCATION_STORAGE_KEY)
+        if (jsonStr) info = JSON.parse(jsonStr)
       } catch (_) {}
+
+      var locations: Location[] = []
+      if (info) {
+        locations = get(info, 'locations')
+      } else {
+        info = { locations: [] }
+        locations = info.locations
+      }
 
       const oldLoc = locations[locations.length - 1]
 
@@ -75,15 +88,24 @@ class BackgroundTracking {
 
       locations.push(location)
 
-      AsyncStorage.setItem(LOCATION_KEY, JSON.stringify({ locations }))
+      if (
+        !applicationState.getData('phuketRegistered') &&
+        LOCATION_STORAGE_KEY
+      ) {
+        return
+      }
+      AsyncStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(info))
     })
 
     BackgroundGeolocation.onHttp((res) => {
+      if (!applicationState.getData('phuketRegistered')) return
       if (res.status !== 200) return
 
-      AsyncStorage.getItem(LOCATION_KEY)
+      AsyncStorage.getItem(LOCATION_STORAGE_KEY)
         .then((locStr) => {
           if (!locStr) return
+
+          AsyncStorage.removeItem(LOCATION_STORAGE_KEY)
 
           fetch(SECONDARY_SYNC_LOCATION_URL + '/location', {
             sslPinning: {
