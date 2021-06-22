@@ -75,7 +75,7 @@ class ScanManager {
         AsyncStorage.setItem(
           'scanner_logs',
           (logs ?? '') +
-            '***** UPLOAD LIST NEARBY: ******' +
+            `[${new Date().toISOString()}] UPLOAD LIST NEARBY:` +
             oldestItemTS +
             '\n' +
             uploadList.map((a) => JSON.stringify(a)).join('\n') +

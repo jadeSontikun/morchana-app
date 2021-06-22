@@ -13,14 +13,18 @@ export const DebugBackgroundLocation = () => {
   const navigation = useNavigation()
   const [logs, setLogs] = useState('')
   const [logs2, setLogs2] = useState('')
+  const [logs3, setLogs3] = useState('')
 
   useEffect(() => {
     const updateLog = () => {
       AsyncStorage.getItem('location_logs').then((storedLogs) => {
-        setLogs(storedLogs ?? '')
+        setLogs('Primary Location:\n' + storedLogs ?? '')
       })
       AsyncStorage.getItem('scanner_logs').then((storedLogs) => {
-        setLogs2('start blutooth\n' + (storedLogs ?? ''))
+        setLogs2('Seconary Location:\n' + (storedLogs ?? ''))
+      })
+      AsyncStorage.getItem('scanner_logs').then((storedLogs) => {
+        setLogs3('Blutooth:\n' + (storedLogs ?? ''))
       })
     }
     let interval = setInterval(() => {
@@ -63,6 +67,19 @@ export const DebugBackgroundLocation = () => {
             }}
           >
             {logs2}
+          </Text>
+        </ScrollView>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={styles.scrollView}
+        >
+          <Text
+            selectable
+            style={{
+              fontSize: FONT_SIZES[200] * 0.75,
+            }}
+          >
+            {logs3}
           </Text>
         </ScrollView>
         <View

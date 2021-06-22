@@ -271,4 +271,10 @@ export default {
   beacon_header: 'คุณได้พบ Beacon',
   notification_history: 'แจ้งเตือน',
   notification_history_empty: 'ไม่มีการแจ้งเตือน',
+  phuket_sandbox_setting: 'ยืนยันตัวตนด้วยโทรศัพท์มือถือ',
+  phuket_sandbox_setting2: 'จังหวัดภูเก็ต',
+  bluetooth_disable_alert_title: 'นี้ไม่ใช้เป็นการปิดบลูทูธ!',
+  bluetooth_disable_alert_message:
+    'คุณจะไม่ได้รับการแจ้งเตือนหากคุณเข้าใกล้ผู้มีความเสี่ยง',
+  bluetooth_disable_alert_accept: 'ปิดการค้นหาบุคคลอื่นผ่านบลูทูธ',
 }

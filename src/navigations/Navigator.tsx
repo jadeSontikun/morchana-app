@@ -7,7 +7,7 @@ import {
   NavigationActions,
 } from 'react-navigation'
 import { COLORS } from '../styles'
-import { AuthStack } from './1-Auth/AuthStack'
+import { AuthStack, PhuketAuthStack } from './1-Auth/AuthStack'
 import { OnboardingStack } from './2-Onboarding/OnboardingStack'
 import { MainAppStack } from './3-MainApp/MainAppStack'
 import { applicationState } from '../state/app-state'
@@ -18,6 +18,7 @@ import { WebviewScreen } from './Webview'
 import { ChangeLanguageScreen } from './ChangeLanguage'
 import { Debug } from './3-MainApp/Debug'
 import { DebugBackgroundLocation } from './3-MainApp/DebugBackgroundLocation'
+import { PhuketSanboxAgreementPolicy } from './5-ProvinceSandbox/SanboxAgreementPolicy'
 
 const Root = ({ navigation }) => {
   useEffect(() => {
@@ -34,7 +35,7 @@ const Root = ({ navigation }) => {
       //       : 'Questionaire'
       //     : 'Onboarding'
       //   : 'Home'
-      
+
       const routeName = isSkipRegistration
         ? onboarded
           ? 'MainApp'
@@ -69,6 +70,9 @@ export default createStackNavigator(
     Auth: {
       screen: AuthStack,
     },
+    PhuketAuth: {
+      screen: PhuketAuthStack,
+    },
     Onboarding: {
       screen: OnboardingStack,
     },
@@ -89,6 +93,9 @@ export default createStackNavigator(
     },
     DebugBackgroundLocation: {
       screen: DebugBackgroundLocation,
+    },
+    PhuketSanboxPolicy: {
+      screen: PhuketSanboxAgreementPolicy,
     },
   },
   {

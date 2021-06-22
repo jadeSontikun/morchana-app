@@ -9,28 +9,31 @@ import { requestLocationPermission } from '../utils/Permission'
 import { beaconLookup } from './beacon-lookup'
 import { beaconScanner, bluetoothScanner } from './contact-scanner'
 import AsyncStorage from '@react-native-community/async-storage'
+import BackgroundGeolocation from 'react-native-background-geolocation'
 
 const eventEmitter = new NativeEventEmitter(NativeModules.ContactTracerModule)
 
 interface ContactTracerProps {
   anonymousId: string
   isPassedOnboarding: boolean
-  notificationTriggerNumber: number;
+  notificationTriggerNumber: number
 }
 
 interface ContactTracerState {
   isServiceEnabled: boolean
   isLocationPermissionGranted: boolean
+  locationPermissionLevel?: number
   isBluetoothOn: boolean
   anonymousId: string
   statusText: string
   beaconLocationName: any
-  notificationTriggerNumber?: number;
+  notificationTriggerNumber?: number
   enable: () => void
   disable: () => void
 }
 
-export const ContractTracerContext = React.createContext<ContactTracerState>(null)
+export const ContractTracerContext =
+  React.createContext<ContactTracerState>(null)
 
 export class ContactTracerProvider extends React.Component<
   ContactTracerProps,
@@ -48,6 +51,7 @@ export class ContactTracerProvider extends React.Component<
     this.state = {
       isServiceEnabled: false,
       isLocationPermissionGranted: false,
+      locationPermissionLevel: 0,
       isBluetoothOn: false,
       anonymousId: '',
       statusText: this.statusText,
@@ -244,6 +248,25 @@ export class ContactTracerProvider extends React.Component<
         this.onNearbyBeaconFoundReceived,
       )
     }
+
+    BackgroundGeolocation.onProviderChange((event) => {
+      console.log('[onProviderChange: ', event)
+
+      switch (event.status) {
+        case BackgroundGeolocation.AUTHORIZATION_STATUS_DENIED:
+          console.log('- Location authorization denied')
+          this.setState({ locationPermissionLevel: 0 })
+          break
+        case BackgroundGeolocation.AUTHORIZATION_STATUS_ALWAYS:
+          console.log('- Location always granted')
+          this.setState({ locationPermissionLevel: 3 })
+          break
+        case BackgroundGeolocation.AUTHORIZATION_STATUS_WHEN_IN_USE:
+          console.log('- Location WhenInUse granted')
+          this.setState({ locationPermissionLevel: 4 })
+          break
+      }
+    })
   }
 
   /**
@@ -284,40 +307,46 @@ export class ContactTracerProvider extends React.Component<
    */
 
   onAdvertiserMessageReceived = (e) => {
-    this.appendStatusText(e['message'])
+    this.appendStatusText(e.message)
   }
 
   onNearbyDeviceFoundReceived = (e) => {
     this.appendStatusText('')
-    this.appendStatusText('***** RSSI: ' + e['rssi'])
-    this.appendStatusText('***** Found Nearby Device: ' + e['name'])
+    this.appendStatusText('***** RSSI: ' + e.rssi)
+    this.appendStatusText('***** Found Nearby Device: ' + e.name)
     this.appendStatusText('')
 
     AsyncStorage.getItem('scanner_logs').then((logs) => {
       AsyncStorage.setItem(
         'scanner_logs',
-        (logs ?? '') + '***** Found Nearby Device: ' + e['name'] + '\n',
+        (logs ?? '') +
+          `[${new Date().toISOString()}] Found Nearby Device: ` +
+          e.name +
+          '\n',
       )
     })
     /* broadcast */
-    console.log('broadcast:' + e['name'])
-    bluetoothScanner.add(e['name'])
-    if (Date.now() - bluetoothScanner.oldestItemTS > 30 * 60 * 1000) {
+    console.log('broadcast:' + e.name)
+    bluetoothScanner.add(e.name)
+    if (Date.now() - (bluetoothScanner?.oldestItemTS ?? 0) > 30 * 60 * 1000) {
       bluetoothScanner.upload()
     }
   }
 
   onNearbyBeaconFoundReceived = async (e: any) => {
     this.appendStatusText('')
-    this.appendStatusText('***** Found Beacon: ' + e['uuid'])
-    this.appendStatusText('***** major: ' + e['major'])
-    this.appendStatusText('***** minor: ' + e['minor'])
+    this.appendStatusText('***** Found Beacon: ' + e.uuid)
+    this.appendStatusText('***** major: ' + e.major)
+    this.appendStatusText('***** minor: ' + e.minor)
     this.appendStatusText('')
 
     AsyncStorage.getItem('scanner_logs').then((logs) => {
       AsyncStorage.setItem(
         'scanner_logs',
-        (logs ?? '') + '***** Found Beacon: ' + e['uuid'] + '\n',
+        (logs ?? '') +
+          `[${new Date().toISOString()}] Found Beacon: ` +
+          e.uuid +
+          '\n',
       )
     })
 
@@ -352,7 +381,12 @@ export class ContactTracerProvider extends React.Component<
 
   render() {
     return (
-      <ContractTracerContext.Provider value={{...this.state, notificationTriggerNumber:this.props.notificationTriggerNumber}}>
+      <ContractTracerContext.Provider
+        value={{
+          ...this.state,
+          notificationTriggerNumber: this.props.notificationTriggerNumber,
+        }}
+      >
         {this.props.children}
       </ContractTracerContext.Provider>
     )
