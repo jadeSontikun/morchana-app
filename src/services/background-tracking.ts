@@ -76,7 +76,7 @@ class BackgroundTracking {
     BackgroundGeolocation.onLocation(async (location) => {
       if (
         !applicationState.getData('phuketRegistered') ||
-        !LOCATION_STORAGE_KEY
+        !SECONDARY_SYNC_LOCATION_URL
       ) {
         return
       }
