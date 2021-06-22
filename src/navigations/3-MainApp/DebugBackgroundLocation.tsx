@@ -20,7 +20,7 @@ export const DebugBackgroundLocation = () => {
       AsyncStorage.getItem('location_logs').then((storedLogs) => {
         setLogs('Primary Location:\n' + storedLogs ?? '')
       })
-      AsyncStorage.getItem('scanner_logs').then((storedLogs) => {
+      AsyncStorage.getItem('location_logs2').then((storedLogs) => {
         setLogs2('Seconary Location:\n' + (storedLogs ?? ''))
       })
       AsyncStorage.getItem('scanner_logs').then((storedLogs) => {

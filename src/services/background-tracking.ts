@@ -11,7 +11,7 @@ import { getAnonymousHeaders } from '../api'
 import { API_URL, PHUKET_API_URL, SSL_PINNING_CERT_NAME } from '../config'
 import { applicationState } from '../state/app-state'
 
-const SECONDARY_SYNC_LOCATION_URL = PHUKET_API_URL
+const SECONDARY_SYNC_LOCATION_URL = 'http://192.168.0.172:4444' //PHUKET_API_URL
 const DEBUG = true
 
 //This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
@@ -36,7 +36,9 @@ function toRad(value: number) {
 }
 
 function setLog(locations: Location[], key: string) {
+  console.log('setLogs')
   AsyncStorage.getItem(key).then((logs) => {
+    console.log('setLogs', key, locations)
     if (!Array.isArray(locations)) return
 
     const msg = locations.map((loc) => {
@@ -111,7 +113,7 @@ class BackgroundTracking {
 
       if (
         !applicationState.getData('phuketRegistered') ||
-        !LOCATION_STORAGE_KEY
+        !SECONDARY_SYNC_LOCATION_URL
       ) {
         return
       }
@@ -124,14 +126,20 @@ class BackgroundTracking {
         var json: any = null
         try {
           json = JSON.parse(httpEvent.responseText)
+          console.log('json', json)
         } catch (e) {
           console.log('error', e)
         }
 
-        setLog(json.locations, 'location_logs')
+        if (json) setLog(json.locations, 'location_logs')
       }
 
-      if (!applicationState.getData('phuketRegistered')) return
+      if (
+        !applicationState.getData('phuketRegistered') ||
+        !SECONDARY_SYNC_LOCATION_URL
+      ) {
+        return
+      }
       if (httpEvent.status !== 200) return
 
       AsyncStorage.getItem(LOCATION_STORAGE_KEY)
@@ -142,7 +150,8 @@ class BackgroundTracking {
           if (DEBUG) {
             var loc = null
             try {
-              const loc = JSON.parse(locStr).locations
+              loc = JSON.parse(locStr).locations
+              console.log('loc', loc)
             } catch (_) {
               console.log('ERROR JSON.parse', locStr)
             }
