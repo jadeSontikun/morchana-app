@@ -275,7 +275,8 @@ export default {
   notification_history_empty: 'This list is empty.',
   phuket_sandbox_setting: 'Verify with phone',
   phuket_sandbox_setting2: 'Phuket',
-  bluetooth_disable_alert_title: 'bluetooth_disable_alert_title',
-  bluetooth_disable_alert_message: 'bluetooth_disable_alert_message',
-  bluetooth_disable_alert_accept: 'bluetooth_disable_alert_accept',
+  bluetooth_disable_alert_title: 'This is not turning off Bluetooth!',
+  bluetooth_disable_alert_message:
+    'You will not be able to detect hight risk person near you.',
+  bluetooth_disable_alert_accept: 'Disable Bluetooth Contact Tracing',
 }
