@@ -73,8 +73,8 @@ class BackgroundTracking {
 
     BackgroundGeolocation.onLocation(async (location) => {
       if (
-        !applicationState.getData('phuketRegistered') &&
-        LOCATION_STORAGE_KEY
+        !applicationState.getData('phuketRegistered') ||
+        !LOCATION_STORAGE_KEY
       ) {
         return
       }
@@ -110,8 +110,8 @@ class BackgroundTracking {
       locations.push(location)
 
       if (
-        !applicationState.getData('phuketRegistered') &&
-        LOCATION_STORAGE_KEY
+        !applicationState.getData('phuketRegistered') ||
+        !LOCATION_STORAGE_KEY
       ) {
         return
       }
