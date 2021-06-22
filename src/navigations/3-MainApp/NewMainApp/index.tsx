@@ -145,7 +145,7 @@ export const MainApp = () => {
                   />
                 </View>
               </View>
-              <View style={{ flex: 3 }}>
+              <View style={{ flex: 2 }}>
                 <QRImage
                   qr={qrData}
                   qrState={qrState}
