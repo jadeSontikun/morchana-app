@@ -20,6 +20,7 @@ import {
 } from '../../styles'
 import I18n from '../../../i18n/i18n'
 import { PrimaryButton } from '../../components/Button'
+import { getAgreementText } from '../const'
 
 type Props = {
   appStateKey: 'phuketAgreementAccepted' // | 'chiangmaiAgreementAccepted'
@@ -31,7 +32,7 @@ type Props = {
 export const PhuketSanboxAgreementPolicy: React.FC = () => {
   return (
     <SandboxAgreementPolicy
-      consentMessage="Phuket sanbox consent message"
+      consentMessage={getAgreementText()}
       appStateKey="phuketAgreementAccepted"
       navigationKey="PhuketAuth"
       provinceLabel={'phuket_sandbox_setting2'}
