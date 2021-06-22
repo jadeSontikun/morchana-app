@@ -320,9 +320,7 @@ export class ContactTracerProvider extends React.Component<
       AsyncStorage.setItem(
         'scanner_logs',
         (logs ?? '') +
-          `[${new Date().toISOString()}] Found Nearby Device: ` +
-          e.name +
-          '\n',
+          `[${new Date().toISOString()}] Found Nearby Device: AID=${e.name}\n`
       )
     })
     /* broadcast */
@@ -340,16 +338,6 @@ export class ContactTracerProvider extends React.Component<
     this.appendStatusText('***** minor: ' + e.minor)
     this.appendStatusText('')
 
-    AsyncStorage.getItem('scanner_logs').then((logs) => {
-      AsyncStorage.setItem(
-        'scanner_logs',
-        (logs ?? '') +
-          `[${new Date().toISOString()}] Found Beacon: ` +
-          e.uuid +
-          '\n',
-      )
-    })
-
     let oldestBeaconFoundTS = beaconScanner.oldestBeaconFoundTS || 0
     if (Date.now() - oldestBeaconFoundTS > 30 * 1000 || !oldestBeaconFoundTS) {
       const { anonymousId, name } = await beaconLookup.getBeaconInfo(
@@ -357,6 +345,15 @@ export class ContactTracerProvider extends React.Component<
         e.major,
         e.minor,
       )
+
+      AsyncStorage.getItem('scanner_logs').then((logs) => {
+        AsyncStorage.setItem(
+          'scanner_logs',
+          (logs ?? '') +
+            `[${new Date().toISOString()}] Found Beacon: name=${name} AID=${anonymousId}\n`,
+        )
+      })
+
       if (anonymousId) {
         this.appendStatusText('***** anonymousId: ' + anonymousId)
         this.appendStatusText('***** name: ' + name)
