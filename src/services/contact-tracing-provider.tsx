@@ -311,16 +311,16 @@ export class ContactTracerProvider extends React.Component<
   }
 
   onNearbyDeviceFoundReceived = (e) => {
-    this.appendStatusText('')
-    this.appendStatusText('***** RSSI: ' + e.rssi)
-    this.appendStatusText('***** Found Nearby Device: ' + e.name)
-    this.appendStatusText('')
+    // this.appendStatusText('')
+    // this.appendStatusText('***** RSSI: ' + e.rssi)
+    // this.appendStatusText('***** Found Nearby Device: ' + e.name)
+    // this.appendStatusText('')
 
     AsyncStorage.getItem('scanner_logs').then((logs) => {
       AsyncStorage.setItem(
         'scanner_logs',
         (logs ?? '') +
-          `[${new Date().toISOString()}] Found Nearby Device: AID=${e.name}\n`
+          `[${new Date().toISOString()}] Found Nearby Device: AID=${e.name}\n`,
       )
     })
     /* broadcast */
@@ -332,11 +332,11 @@ export class ContactTracerProvider extends React.Component<
   }
 
   onNearbyBeaconFoundReceived = async (e: any) => {
-    this.appendStatusText('')
-    this.appendStatusText('***** Found Beacon: ' + e.uuid)
-    this.appendStatusText('***** major: ' + e.major)
-    this.appendStatusText('***** minor: ' + e.minor)
-    this.appendStatusText('')
+    // this.appendStatusText('')
+    // this.appendStatusText('***** Found Beacon: ' + e.uuid)
+    // this.appendStatusText('***** major: ' + e.major)
+    // this.appendStatusText('***** minor: ' + e.minor)
+    // this.appendStatusText('')
 
     let oldestBeaconFoundTS = beaconScanner.oldestBeaconFoundTS || 0
     if (Date.now() - oldestBeaconFoundTS > 30 * 1000 || !oldestBeaconFoundTS) {
@@ -347,16 +347,13 @@ export class ContactTracerProvider extends React.Component<
       )
 
       AsyncStorage.getItem('scanner_logs').then((logs) => {
-        AsyncStorage.setItem(
-          'scanner_logs',
-          (logs ?? '') +
-            `[${new Date().toISOString()}] Found Beacon: name=${name} AID=${anonymousId}\n`,
-        )
+        const str = `[${new Date().toISOString()}] Found Beacon: name=${name} AID=${anonymousId}\n`
+        AsyncStorage.setItem('scanner_logs', (logs ?? '') + str)
       })
 
       if (anonymousId) {
-        this.appendStatusText('***** anonymousId: ' + anonymousId)
-        this.appendStatusText('***** name: ' + name)
+        // this.appendStatusText('***** anonymousId: ' + anonymousId)
+        // this.appendStatusText('***** name: ' + name)
         this.setState({
           beaconLocationName: {
             anonymousId,

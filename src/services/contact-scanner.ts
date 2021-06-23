@@ -76,7 +76,6 @@ class ScanManager {
           'scanner_logs',
           (logs ?? '') +
             `[${new Date().toISOString()}] UPLOAD LIST NEARBY:` +
-            oldestItemTS +
             '\n' +
             uploadList.map((a) => JSON.stringify(a)).join('\n') +
             '\n',
