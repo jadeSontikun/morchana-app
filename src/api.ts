@@ -102,7 +102,7 @@ export const requestOTP = async (mobileNo: string) => {
     }),
   )
   console.log('requestOTP', getAnonymousHeaders())
-  const resp = await fetch(OPT_URL + `/requestOTP`, {
+  const resp = await fetch(OTP_URL + `/requestOTP`, {
     method: 'POST',
     sslPinning: {
       certs: [PHUKET_SSL_PINNING_CERT_NAME],
