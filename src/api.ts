@@ -74,7 +74,7 @@ export const registerDeviceForPhuket = async (
   const resp = await fetch(PHUKET_API_URL + `/registerDevice`, {
     method: 'POST',
     sslPinning: {
-      certs: [SSL_PINNING_CERT_NAME],
+      certs: [PHUKET_SSL_PINNING_CERT_NAME],
     },
     headers: {
       'Content-Type': 'application/json',
@@ -94,15 +94,16 @@ export const registerDeviceForPhuket = async (
 }
 
 export const requestOTP = async (mobileNo: string) => {
+  const url = OTP_URL + `/requestOTP`
   console.log(
-    'OPT_URL',
-    API_URL + `/requestOTP`,
+    'OTP_URL',
+    url,
     JSON.stringify({
       mobileNo /* use to send sms only, store only hashed phone number in server */,
     }),
   )
   console.log('requestOTP', getAnonymousHeaders())
-  const resp = await fetch(OTP_URL + `/requestOTP`, {
+  const resp = await fetch(url, {
     method: 'POST',
     sslPinning: {
       certs: [PHUKET_SSL_PINNING_CERT_NAME],
