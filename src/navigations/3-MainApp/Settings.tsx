@@ -28,9 +28,9 @@ export const Settings = () => {
     navigation.navigate('PrivacyPolicy')
   }
 
-  const onPhuketClick = phuketRegistered
-    ? undefined
-    : () =>
+  // const onPhuketClick = phuketRegistered
+  //   ? undefined
+  const onPhuketClick = () =>
         navigation.navigate(
           phuketAgreementAccepted ? 'PhuketAuth' : 'PhuketSanboxPolicy',
         )

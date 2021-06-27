@@ -8,7 +8,7 @@ import DeviceInfo from 'react-native-device-info'
 import { fetch } from 'react-native-ssl-pinning'
 import I18n from '../../i18n/i18n'
 import { getAnonymousHeaders } from '../api'
-import { API_URL, PHUKET_API_URL, SSL_PINNING_CERT_NAME } from '../config'
+import { API_URL, PHUKET_API_URL, SSL_PINNING_CERT_NAME, PHUKET_SSL_PINNING_CERT_NAME } from '../config'
 import { applicationState } from '../state/app-state'
 
 const SECONDARY_SYNC_LOCATION_URL = PHUKET_API_URL
@@ -46,7 +46,7 @@ class BackgroundTracking {
 
     const MIN_DISTANCE = 25
     const AUTO_SYNC_THRESHOLD = 10
-    const MAX_BATCH_SIZE = 30
+    const MAX_BATCH_SIZE = 400
 
     const LOCATION_STORAGE_KEY = 'location-list'
 
@@ -88,12 +88,6 @@ class BackgroundTracking {
 
       locations.push(location)
 
-      if (
-        !applicationState.getData('phuketRegistered') ||
-        !SECONDARY_SYNC_LOCATION_URL
-      ) {
-        return
-      }
       AsyncStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(info))
     })
 
@@ -103,18 +97,27 @@ class BackgroundTracking {
 
       AsyncStorage.getItem(LOCATION_STORAGE_KEY)
         .then((locStr) => {
+          console.log('logStr', locStr)
           if (!locStr) return
 
-          AsyncStorage.removeItem(LOCATION_STORAGE_KEY)
-
-          fetch(SECONDARY_SYNC_LOCATION_URL + '/location', {
+          console.log(
+            'send location',
+            SECONDARY_SYNC_LOCATION_URL + '/location',
+            PHUKET_SSL_PINNING_CERT_NAME
+          )
+          return fetch(SECONDARY_SYNC_LOCATION_URL + '/location', {
             sslPinning: {
-              certs: [SSL_PINNING_CERT_NAME],
+              certs: [PHUKET_SSL_PINNING_CERT_NAME],
             },
             headers: headers,
             method: 'POST',
             body: locStr,
           })
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            AsyncStorage.removeItem(LOCATION_STORAGE_KEY)
+          }
         })
         .catch((e) => console.log('Send secondary locations failed.\n', e))
     })

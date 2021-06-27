@@ -3,8 +3,8 @@ import { createStackNavigator } from 'react-navigation'
 import { AuthPhone } from './AuthPhone'
 import { AuthOTP } from './AuthOTP'
 import { OnboardPhone } from './OnboardPhone'
-import { Alert } from 'react-native'
-import { mobileParing } from '../../api'
+import { Alert, AsyncStorage } from 'react-native'
+import { mobileParing, registerDeviceForPhuket } from '../../api'
 import { useResetTo } from '../../utils/navigation'
 import { applicationState } from '../../state/app-state'
 import I18n from '../../../i18n/i18n'
@@ -21,7 +21,7 @@ export const AuthStack = createStackNavigator(
   },
   {
     headerMode: 'none',
-    mode: 'modal'
+    mode: 'modal',
   },
 )
 
@@ -35,10 +35,15 @@ export const PhuketAuthStack = createStackNavigator(
           submit={async (mobileNumber, otp) => {
             try {
               const bool = await mobileParing(mobileNumber, otp)
+              console.log('mobileParing', bool)
               if (!bool) {
                 Alert.alert(I18n.t('wrong_pwd'))
                 return
               }
+
+              const res = await registerDeviceForPhuket(mobileNumber)
+              console.log('registerDeviceForPhuket', res)
+
               applicationState.setData('phuketRegistered', true)
               resetTo({ routeName: 'MainApp' })
             } catch (err) {
@@ -57,6 +62,6 @@ export const PhuketAuthStack = createStackNavigator(
   },
   {
     headerMode: 'none',
-    mode: 'modal'
+    mode: 'modal',
   },
 )

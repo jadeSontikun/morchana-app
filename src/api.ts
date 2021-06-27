@@ -9,6 +9,7 @@ import {
   SHOP_API_URL,
   SHOP_QR_PINNING_CERT,
   PHUKET_API_URL,
+  PHUKET_SSL_PINNING_CERT_NAME,
 } from './config'
 import { encryptMessage, refetchDDCPublicKey } from './utils/crypto'
 import { fetch } from 'react-native-ssl-pinning'
@@ -63,11 +64,48 @@ export const registerDevice = async (): Promise<{
   return { anonymousId: result.anonymousId, token: result.token }
 }
 
-export const requestOTP = async (mobileNo: string) => {
-  const resp = await fetch(OTP_URL + `/requestOTP`, {
+export const registerDeviceForPhuket = async (
+  mobileNo: string,
+): Promise<{
+  anonymousId: string
+  token: string
+}> => {
+  console.log('registerDeviceForPhuket url', PHUKET_API_URL + `/registerDevice`)
+  const resp = await fetch(PHUKET_API_URL + `/registerDevice`, {
     method: 'POST',
     sslPinning: {
       certs: [SSL_PINNING_CERT_NAME],
+    },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-TH-ANONYMOUS-ID': userPrivateData.getAnonymousId(),
+    },
+    body: JSON.stringify({
+      deviceId: DeviceInfo.getUniqueId(),
+      mobileNo: mobileNo,
+    }),
+  })
+  const result = await resp.json()
+  if (!result.anonymousId) {
+    throw new Error('RegisterDevice failed')
+  }
+
+  return { anonymousId: result.anonymousId, token: result.token }
+}
+
+export const requestOTP = async (mobileNo: string) => {
+  console.log(
+    'OPT_URL',
+    API_URL + `/requestOTP`,
+    JSON.stringify({
+      mobileNo /* use to send sms only, store only hashed phone number in server */,
+    }),
+  )
+  console.log('requestOTP', getAnonymousHeaders())
+  const resp = await fetch(OPT_URL + `/requestOTP`, {
+    method: 'POST',
+    sslPinning: {
+      certs: [PHUKET_SSL_PINNING_CERT_NAME],
     },
     headers: getAnonymousHeaders(),
     body: JSON.stringify({
@@ -80,7 +118,7 @@ export const requestOTP = async (mobileNo: string) => {
 }
 
 /*
-  verify otp and save encryptedMobileNo
+verify otp and save encryptedMobileNo
 */
 export const mobileParing = async (mobileNo: string, otpCode: string) => {
   await refetchDDCPublicKey()
@@ -88,7 +126,7 @@ export const mobileParing = async (mobileNo: string, otpCode: string) => {
   const resp = await fetch(OTP_URL + `/mobileParing`, {
     method: 'POST',
     sslPinning: {
-      certs: [SSL_PINNING_CERT_NAME],
+      certs: [PHUKET_SSL_PINNING_CERT_NAME],
     },
     headers: getAnonymousHeaders(),
     body: JSON.stringify({ otpCode, encryptedMobileNo }),
