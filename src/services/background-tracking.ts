@@ -8,7 +8,12 @@ import DeviceInfo from 'react-native-device-info'
 import { fetch } from 'react-native-ssl-pinning'
 import I18n from '../../i18n/i18n'
 import { getAnonymousHeaders } from '../api'
-import { API_URL, PHUKET_API_URL, SSL_PINNING_CERT_NAME, PHUKET_SSL_PINNING_CERT_NAME } from '../config'
+import {
+  API_URL,
+  PHUKET_API_URL,
+  SSL_PINNING_CERT_NAME,
+  PHUKET_SSL_PINNING_CERT_NAME,
+} from '../config'
 import { applicationState } from '../state/app-state'
 
 const SECONDARY_SYNC_LOCATION_URL = PHUKET_API_URL
@@ -58,6 +63,9 @@ class BackgroundTracking {
         return
       }
 
+      if ('error' in location) return
+      if (!('timestamp' in location && 'coords' in location)) return
+
       var info = null
       try {
         const jsonStr = await AsyncStorage.getItem(LOCATION_STORAGE_KEY)
@@ -75,7 +83,8 @@ class BackgroundTracking {
       const oldLoc = locations[locations.length - 1]
 
       // not extra location then check min distance
-      if (isEmpty(location.extras) && oldLoc) {
+      if (!isEmpty(location.extras) && oldLoc) {
+        console.log('check location', oldLoc.coords, location.coords)
         const dist = calcCrow(
           oldLoc.coords.latitude,
           oldLoc.coords.longitude,
@@ -103,7 +112,7 @@ class BackgroundTracking {
           console.log(
             'send location',
             SECONDARY_SYNC_LOCATION_URL + '/location',
-            PHUKET_SSL_PINNING_CERT_NAME
+            PHUKET_SSL_PINNING_CERT_NAME,
           )
           return fetch(SECONDARY_SYNC_LOCATION_URL + '/location', {
             sslPinning: {
@@ -114,8 +123,8 @@ class BackgroundTracking {
             body: locStr,
           })
         })
-        .then((res) => {
-          if (res.status === 200) {
+        .then((res2) => {
+          if (res2 && res2.status === 200) {
             AsyncStorage.removeItem(LOCATION_STORAGE_KEY)
           }
         })

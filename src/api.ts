@@ -66,10 +66,7 @@ export const registerDevice = async (): Promise<{
 
 export const registerDeviceForPhuket = async (
   mobileNo: string,
-): Promise<{
-  anonymousId: string
-  token: string
-}> => {
+): Promise<boolean> => {
   console.log('registerDeviceForPhuket url', PHUKET_API_URL + `/registerDevice`)
   const resp = await fetch(PHUKET_API_URL + `/registerDevice`, {
     method: 'POST',
@@ -86,11 +83,12 @@ export const registerDeviceForPhuket = async (
     }),
   })
   const result = await resp.json()
-  if (!result.anonymousId) {
+  console.log('registerDeviceForPhuket', result)
+  if (!result || result.status !== 'ok') {
     throw new Error('RegisterDevice failed')
   }
 
-  return { anonymousId: result.anonymousId, token: result.token }
+  return true
 }
 
 export const requestOTP = async (mobileNo: string) => {
